@@ -44,7 +44,7 @@ services:
       MYSQL_ROOT_PASSWORD: wordpress 
     networks:
       - wpnw
-  
+   
 
 volumes:
   db:
