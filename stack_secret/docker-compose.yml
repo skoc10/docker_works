@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  app:
+    image: wordpress:latest
+    depends_on:
+      - database
+    deploy:
+      replicas: 1
+    environment:
+      WORDPRESS_DB_HOST: datebase:3306
+      WORDPRESS_DB_USER: /run/secrets/MYSQL_USER
+      WORDPRESS_DB_PASSWORD: /run/secrets/MYSQL_ROOT_PASSWORD
+      WORDPRESS_DB_NAME: wordpress
+    hostname: wordpress.local
+    secrets:
+      - MYSQL_USER
+      - MYSQL_ROOT_PASSWORD
+    networks:
+      - wordpress-network
+    ports:
+      - "8080:80"
+
+  database:
+    image: mysql:5.7
+    deploy:
+      replicas: 1
+    environment:
+      MYSQL_ROOT_PASSWORD: '/run/secrets/MYSQL_ROOT_PASSWORD'
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: '/run/secrets/MYSQL_USER'
+      MYSQL_PASSWORD: '/run/secrets/MYSQL_PASSWORD'
+    secrets:
+      - MYSQL_PASSWORD
+      - MYSQL_USER
+      - MYSQL_ROOT_PASSWORD
+    networks:
+      - wordpress-network
+    volumes:
+     - db:/data/db
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  wordpress-network:
+    driver: overlay
+
+secrets:
+  MYSQL_PASSWORD:
+    file: ./mysql_password.txt
+  MYSQL_USER:
+    file: ./mysql_user.txt
+  MYSQL_ROOT_PASSWORD:
+    file: ./mysql_root_password.txt
