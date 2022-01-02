@@ -6,7 +6,7 @@ services:
     depends_on:
       - database
     deploy:
-      replicas: 1
+      replicas: 2
     environment:
       WORDPRESS_DB_HOST: datebase:3306
       WORDPRESS_DB_USER: /run/secrets/MYSQL_USER
